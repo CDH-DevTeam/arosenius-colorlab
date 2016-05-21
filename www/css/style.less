@@ -1,0 +1,36 @@
+@import "mixins.less";
+@import "normalize.css";
+@import "skeleton.css";
+
+html, body {
+	font-size: 100%;
+}
+
+.image-list {
+	.item {
+		display: inline-block;
+		
+		width: 45%;
+
+		padding: 20px 0 30px 20px;
+
+		img {
+			max-height: 300px;
+		}
+	}
+}
+
+.colors {
+	.color {
+		display: inline-block;
+
+		width: 40px;
+		height: 40px;
+
+		border-radius: 2px;
+
+		.narrow& {
+			height: 20px;
+		}
+	}
+}

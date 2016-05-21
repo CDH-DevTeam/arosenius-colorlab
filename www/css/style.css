@@ -1,0 +1,1 @@
+@import "normalize.css";@import "skeleton.css";body,html{font-size:100%}.image-list .item{display:inline-block;width:45%;padding:20px 0 30px 20px}.image-list .item img{max-height:300px}.colors .color{display:inline-block;width:40px;height:40px;border-radius:2px}.narrow.colors .color{height:20px}
