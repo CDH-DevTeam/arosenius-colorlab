@@ -38,13 +38,13 @@
 			<a href="data/images/png/<%= model.get('obj_id') %>.png" target="_blank"><img src="data/images/png/<%= model.get('obj_id') %>.png"/></a>
 
 			<div class="colors">
-				<% _.each(model.get('colors').ten, function(color) { %>
+				<% _.each(model.get('colors').five, function(color) { %>
 					<div class="color" style="background-color: <%= color.hex %>"></div>
 				<% }) %>
 			</div>
 
 			<div class="colors narrow">
-				<% _.each(model.get('colors').ten_mapped, function(color) { %>
+				<% _.each(model.get('colors').five_mapped, function(color) { %>
 					<div class="color" style="background-color: <%= color.hex %>"></div>
 				<% }) %>
 			</div>
