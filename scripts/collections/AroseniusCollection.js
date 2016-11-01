@@ -7,7 +7,7 @@ module.exports = Backbone.Collection.extend({
 	byColor: function(hue, saturation) {
 		var query = {
 			museum: 'Nationalmuseum',
-			color_margins: 0
+			color_margins: 4
 		};
 
 		if (hue) {
@@ -17,7 +17,7 @@ module.exports = Backbone.Collection.extend({
 		if (saturation) {
 			query.saturation = saturation;
 		}
-		
+
 		this.fetch({
 			reset: true,
 			data: query
