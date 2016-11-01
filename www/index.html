@@ -53,18 +53,18 @@
 
 <script type="text/javascript" id="imageListTemplate">
 	<% _.each(models, function(model) { %>
-		<div class="item">
+		<a class="item" href="http://cdh-vir-1.it.gu.se:8010/#document/<%= model.get('id') %>" target="_blank">
 
-			<h3><%= model.get('title') %></h3>
-			<a href="http://cdh-vir-1.it.gu.se:8010/#document/<%= model.get('id') %>" target="_blank"><img src="http://cdh-vir-1.it.gu.se:8004/images/255x/<%= model.get('image') %>.jpg"/></a>
+			<div class="title"><%= model.get('title') %></div>
+			<img src="http://cdh-vir-1.it.gu.se:8004/images/255x/<%= model.get('image') %>.jpg"/>
 
-			<div class="u-cf"></div>
-			<% _.each(model.get('color').colors.five, function(color) { %>
-				<div class="color" style="background-color: <%= color.hex %>"><%= color.hsv.h %></div>
-			<% }) %>
-			<div class="u-cf"></div>
+			<div class="colors">
+				<% _.each(model.get('color').colors.five, function(color) { %>
+					<div class="color" style="background-color: <%= color.hex %>"><%= color.hsv.h %></div>
+				<% }) %>
+			</div>
 
-		</div>
+		</a>
 	<% }) %>
 </script>
 
