@@ -5,7 +5,10 @@ module.exports = Backbone.Collection.extend({
 	url: 'http://cdh-vir-1.it.gu.se:8004/documents',
 
 	byColor: function(hue, saturation) {
-		var query = {};
+		var query = {
+			museum: 'Nationalmuseum',
+			color_margins: 0
+		};
 
 		if (hue) {
 			query.hue = hue;
@@ -14,9 +17,7 @@ module.exports = Backbone.Collection.extend({
 		if (saturation) {
 			query.saturation = saturation;
 		}
-
-		query.museum = 'Nationalmuseum';
-
+		
 		this.fetch({
 			reset: true,
 			data: query
