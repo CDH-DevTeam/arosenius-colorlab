@@ -3,6 +3,6 @@ var $ = require('jquery');
 
 $(function() {
 	window.appView = new AppView({
-		el: $('#imageListContainer')
+		el: $('#appView')
 	});
 });

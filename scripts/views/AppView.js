@@ -2,94 +2,106 @@ var Backbone = require('backbone');
 var _ = require('underscore');
 var $ = require('jquery');
 
-var NmCollection = require('./../collections/NmCollection');
+var chroma = require('chroma-js');
+
+var AroseniusCollection = require('./../collections/AroseniusCollection');
+var ColorCircle = require('./ColorCircle');
+var ColorGraph = require('./ColorGraph');
 
 module.exports = Backbone.View.extend({
 	initialize: function() {
-		this.collection = new NmCollection();
+		this.collection = new AroseniusCollection();
 		this.collection.on('reset', this.render, this);
 		this.collection.fetch({
-			reset: true
+			reset: true,
+			data: {
+				museum: 'Nationalmuseum'
+			}
 		});
+
+//		this.drawPalette();
+
+//		this.createCircle();
+
+		this.createGraph();
 	},
 
-	sortColors: function(colors) {
-		var colorDistance = function(color1, color2) {
-			// This is actually the square of the distance but
-			// this doesn't matter for sorting.
-			var result = 0;
-			for (var i = 0; i < color1.length; i++)
-				result += (color1[i] - color2[i]) * (color1[i] - color2[i]);
-			return result;
-		}
+	drawPalette: function() {
+		this.canvas = $('.color-picker')[0];
+		this.ctx = this.canvas.getContext('2d');
 
-		// Calculate distance between each color
-		var distances = [];
-		for (var i = 0; i < colors.length; i++) {
-			distances[i] = [];
-			for (var j = 0; j < i; j++)
-				distances.push([colors[i], colors[j], colorDistance(colors[i], colors[j])]);
-		}
-		distances.sort(function(a, b) {
-			return a[2] - b[2];
+		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+		var hGrad = this.ctx.createLinearGradient(0, 0, this.canvas.width, 0);
+		hGrad.addColorStop(0 / 6, '#F00');
+		hGrad.addColorStop(1 / 6, '#FF0');
+		hGrad.addColorStop(2 / 6, '#0F0');
+		hGrad.addColorStop(3 / 6, '#0FF');
+		hGrad.addColorStop(4 / 6, '#00F');
+		hGrad.addColorStop(5 / 6, '#F0F');
+		hGrad.addColorStop(6 / 6, '#F00');
+
+		this.ctx.fillStyle = hGrad;
+		this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+		var vGrad = this.ctx.createLinearGradient(0, 0, 0, this.canvas.height);
+
+//		vGrad.addColorStop(0, 'rgba(255,255,255,0)');
+//		vGrad.addColorStop(1, 'rgba(255,255,255,1)');
+
+
+		vGrad.addColorStop(0, 'rgba(150,150,150,0)');
+		vGrad.addColorStop(1, 'rgba(150,150,150,1)');
+
+		this.ctx.fillStyle = vGrad;
+		this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+		$('.color-picker').click(_.bind(this.canvasClick, this));
+	},
+
+	createCircle: function() {
+		this.colorCircle = new ColorCircle({
+			el: this.$el.find('.circle-wrapper')[0]
 		});
+		this.colorCircle.on('select', _.bind(function(event) {
+			console.log(event)
+			this.collection.byColor(Math.round(event.h), Math.round(event.s*100), 50);
+		}, this));
+	},
 
-		// Put each color into separate cluster initially
-		var colorToCluster = {};
-		for (var i = 0; i < colors.length; i++)
-			colorToCluster[colors[i]] = [colors[i]];
+	createGraph: function() {
+		this.colorGraph = new ColorGraph({
+			el: this.$el.find('.graph-wrapper')[0]
+		});
+		this.colorGraph.on('select', _.bind(function(event) {
+			console.log(event)
+			this.collection.byColor(event.h, event.s, 50);
+		}, this));
+	},
 
-		// Merge clusters, starting with lowest distances
-		var lastCluster;
-		for (var i = 0; i < distances.length; i++) {
-			var color1 = distances[i][0];
-			var color2 = distances[i][1];
-			var cluster1 = colorToCluster[color1];
-			var cluster2 = colorToCluster[color2];
-			if (!cluster1 || !cluster2 || cluster1 == cluster2)
-				continue;
+	canvasClick: function(event) {
+		$('.canvas-marker').css({
+			top: event.offsetY-1,
+			left: event.offsetX-1
+		});
+		var point = this.ctx.getImageData(event.offsetX, event.offsetY, 1, 1).data;
 
-			// Make sure color1 is at the end of its cluster and
-			// color2 at the beginning.
-			if (color1 != cluster1[cluster1.length - 1])
-				cluster1.reverse();
-			if (color2 != cluster2[0])
-				cluster2.reverse();
+		var hsv = chroma(point[0], point[1], point[2]).hsv();
+		hsv = {
+			h: !hsv[0] || hsv[0] == null || typeof hsv[0] === 'null' || Math.round(hsv[0]) == null ? 0 : Math.round(hsv[0]), 
+			s: !hsv[1] || hsv[1] == null || typeof hsv[1] === 'null' || Math.round(hsv[1]*100) == null ? 0 : Math.round(hsv[1]*100), 
+			v: !hsv[2] || hsv[2] == null || typeof hsv[2] === 'null' || Math.round(hsv[2]*100) == null ? 0 : Math.round(hsv[2]*100)
+		};
 
-			// Merge cluster2 into cluster1
-			cluster1.push.apply(cluster1, cluster2);
-			delete colorToCluster[color1];
-			delete colorToCluster[color2];
-			colorToCluster[cluster1[0]] = cluster1;
-			colorToCluster[cluster1[cluster1.length - 1]] = cluster1;
-			lastCluster = cluster1;
-		}
-
-		// By now all colors should be in one cluster
-		return lastCluster;
+		console.log('hue: '+hsv.h);
+		
+		this.collection.byColor(hsv.h, hsv.s, 50);
 	},
 
 	render: function() {
-		console.log('AppView:render');
-
 		var template = _.template($("#imageListTemplate").html());
-		this.$el.html(template({
+		this.$el.find('.image-list').html(template({
 			models: this.collection.models
-		}));
-
-		var uniqueColors = _.uniq(_.flatten(_.map(this.collection.models, function(model) {
-			return _.pluck(model.get('colors').five_mapped, 'hex');
-		})));
-
-		console.log(uniqueColors);
-
-		uniqueColors.sort();
-
-//		uniqueColors = this.sortColors(uniqueColors);
-
-		var template = _.template($("#colorsListTemplate").html());
-		$('#colorsList').html(template({
-			colors: uniqueColors
 		}));
 
 		return this;
