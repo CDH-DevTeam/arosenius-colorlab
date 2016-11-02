@@ -40,7 +40,7 @@ module.exports = Backbone.View.extend({
 	},
 
 	renderGraph: function() {
-		this.yRange = d3.scaleLinear().range([this.graphMargins, this.graphRadius-(this.graphMargins*2)]).domain([-50, 100]);
+		this.yRange = d3.scaleLinear().range([0, this.graphRadius]).domain([0, 100]);
 
 		var view = this;
 
