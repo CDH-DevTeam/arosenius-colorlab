@@ -41,7 +41,6 @@ module.exports = Backbone.View.extend({
 	},
 
 	renderGraph: function() {
-		console.log(d3)
 		this.xRange = d3.scaleLinear().range([this.graphMargins, this.graphWidth-(this.graphMargins*2)]).domain([0, 360]);
 		this.yRange = d3.scaleLinear().range([this.graphMargins, this.graphHeight-(this.graphMargins*2)]).domain([100, 0]);
 

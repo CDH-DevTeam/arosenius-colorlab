@@ -21,9 +21,9 @@ module.exports = Backbone.View.extend({
 
 //		this.drawPalette();
 
-//		this.createCircle();
+		this.createCircle();
 
-		this.createGraph();
+//		this.createGraph();
 	},
 
 	drawPalette: function() {
@@ -64,8 +64,7 @@ module.exports = Backbone.View.extend({
 			el: this.$el.find('.circle-wrapper')[0]
 		});
 		this.colorCircle.on('select', _.bind(function(event) {
-			console.log(event)
-			this.collection.byColor(Math.round(event.h), Math.round(event.s*100), 50);
+			this.collection.byColor(event.h, event.s, 50);
 		}, this));
 	},
 
@@ -74,7 +73,6 @@ module.exports = Backbone.View.extend({
 			el: this.$el.find('.graph-wrapper')[0]
 		});
 		this.colorGraph.on('select', _.bind(function(event) {
-			console.log(event)
 			this.collection.byColor(event.h, event.s, 50);
 		}, this));
 	},
