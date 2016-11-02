@@ -21,9 +21,9 @@ module.exports = Backbone.View.extend({
 
 //		this.drawPalette();
 
-		this.createCircle();
+//		this.createCircle();
 
-//		this.createGraph();
+		this.createGraph();
 	},
 
 	drawPalette: function() {
