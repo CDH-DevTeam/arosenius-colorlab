@@ -17,7 +17,7 @@ module.exports = Backbone.View.extend({
 		this.renderGraph();
 
 		this.collection = new Backbone.Collection();
-		this.collection.url = 'http://cdh-vir-1.it.gu.se:8004/colormap';
+		this.collection.url = 'https://aroseniusarkivet.dh.gu.se/api/colormap';
 		this.collection.on('reset', this.render, this);
 		this.collection.fetch({
 			reset: true,
